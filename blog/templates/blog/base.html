@@ -35,10 +35,15 @@
 							<a class="nav-link" href="{% url 'blog:create_post' %}">New Post</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="{% url 'blog:drafts_list' %}">New Post</a>
+							<a class="nav-link" href="{% url 'blog:drafts_list' %}">Drafts</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="{% url 'logout' %}">Logout</a>
+							<form method="post" action="{% url 'logout' %}" class="d-inline">
+								{% csrf_token %}
+								<button type="submit" class="nav-link btn btn-link px-0" style="border: none; background: none;">
+									Logout
+								</button>
+							</form>
 						</li>
 					{% else %}
 						<li class="nav-item">

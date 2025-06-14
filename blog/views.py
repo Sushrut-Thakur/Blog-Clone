@@ -65,7 +65,8 @@ class UpdatePostView(LoginRequiredMixin, UpdateView):
 	
 class DeletePostView(LoginRequiredMixin, DeleteView):
 	model = Post
-	success_url = reverse_lazy('post_list')
+	template_name = 'post_delete.html'
+	success_url = reverse_lazy('blog:posts_list')
 
 	def get_object(self, queryset=None):
 		post_id = self.kwargs.get('post_id')
@@ -76,6 +77,7 @@ class DraftListView(LoginRequiredMixin, ListView):
 	redirect_field_name = 'blog/post_list.html'
 	model = Post
 	context_object_name = 'draft_posts'
+	template_name = 'blog/post_draft_list.html'
 
 	def get_queryset(self):
 		return Post.objects.filter(

@@ -21,7 +21,7 @@ class Post(models.Model):
 		return self.comments.filter(approved=True)
 	
 	def get_absolute_url(self):
-		return reverse('post_detail', kwargs={'post_id': self.pk})
+		return reverse('blog:post_detail', kwargs={'post_id': self.pk})
 	
 	def __str__(self):
 		return self.title
@@ -31,7 +31,7 @@ class Comment(models.Model):
 	text = models.TextField()
 	approved = models.BooleanField(default=False)
 	created_at = models.DateTimeField(auto_now_add=True)
-	post = models.ForeignKey(Post, on_delete=CASCADE)
+	post = models.ForeignKey(Post, related_name='comments', on_delete=CASCADE)
 
 	def approve(self):
 		self.approved = True
