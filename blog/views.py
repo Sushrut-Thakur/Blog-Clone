@@ -20,10 +20,12 @@ from blog.forms import PostForm, CommentForm
 ##############################################
 
 class AboutView(TemplateView):
-	template_name = 'about.html'
+	template_name = 'blog/about.html'
 
 class PostListView(ListView):
 	model = Post
+	template_name = 'post_list.html'
+	context_object_name = 'posts'
 
 	def get_queryset(self):
 		return Post.objects.filter(
@@ -33,6 +35,7 @@ class PostListView(ListView):
 class PostDetailView(DetailView):
 	model = Post
 	template_name = 'post_detail.html'
+	context_object_name = 'post'
 
 	def get_object(self, queryset=None):
 		post_id = self.kwargs.get('post_id')
@@ -41,9 +44,14 @@ class PostDetailView(DetailView):
 
 class CreatePostView(LoginRequiredMixin, CreateView):
 	login_url = '/login/'
+	template_name = 'post_form.html'
 	redirect_field_name = 'blog/post_detail.html'
 	form_class = PostForm
 	model = Post
+
+	def form_valid(self, form):
+		form.instance.author = self.request.user
+		return super().form_valid(form)
 
 class UpdatePostView(LoginRequiredMixin, UpdateView):
 	login_url = '/login/'
@@ -67,6 +75,7 @@ class DraftListView(LoginRequiredMixin, ListView):
 	login_url = '/login/'
 	redirect_field_name = 'blog/post_list.html'
 	model = Post
+	context_object_name = 'draft_posts'
 
 	def get_queryset(self):
 		return Post.objects.filter(

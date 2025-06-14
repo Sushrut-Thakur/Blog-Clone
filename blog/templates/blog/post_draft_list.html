@@ -1,0 +1,31 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+	Draft Posts
+{% endblock %}
+
+{% block content %}
+	<h2 class="text-center mb-5">All Draft Blogs</h2>
+
+	{% if draft_posts %}
+		{% for post in draft_posts %}
+			<div class="card mb-4 shadow-sm">
+				<div class="card-body">
+					<p class="text-muted mb-2 text-center">
+						{{ post.created_date|date:"j M Y" }}
+					</p>
+					<h4 class="card-title text-center">
+						<a href="{% url 'blog:post_detail' post_id=post.id %}" class="text-decoration-none text-dark">
+							{{ post.title }}
+						</a>
+					</h4>
+					<p class="card-text mt-3 text-muted text-center">
+						{{ post.text|truncatechars:200 }}
+					</p>
+				</div>
+			</div>
+		{% endfor %}
+	{% else %}
+		<p class="text-center">No drafts yet!</p>
+	{% endif %}
+{% endblock %}

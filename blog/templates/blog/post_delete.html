@@ -1,0 +1,26 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+	Delete Post
+{% endblock %}
+
+{% block content %}
+	<div class="container mt-5">
+		<div class="card shadow-sm border-danger">
+			<div class="card-body">
+				<h2 class="card-title text-danger text-center mb-4">Confirm Deletion</h2>
+				
+				<p class="text-center">
+					Are you absolutely sure you want to delete the post:
+					<strong class="text-dark">{{ object.title }}</strong>?
+				</p>
+
+				<form method="POST" class="text-center mt-4">
+					{% csrf_token %}
+					<a href="{{ object.get_absolute_url }}" class="btn btn-secondary me-2">Cancel</a>
+					<input type="submit" class="btn btn-danger" value="Yes, Delete it">
+				</form>
+			</div>
+		</div>
+	</div>
+{% endblock %}
