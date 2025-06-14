@@ -1,4 +1,8 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.utils import timezone
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse_lazy
 from django.views.generic import (
 	TemplateView,
 	ListView,
@@ -7,14 +11,14 @@ from django.views.generic import (
 	UpdateView,
 	DeleteView,
 )
-from django.utils import timezone
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
 
 from blog.models import Post, Comment
-from blog.forms import PostForm
+from blog.forms import PostForm, CommentForm
 
-# Create your views here.
+##############################################
+# POST VIEWS
+##############################################
+
 class AboutView(TemplateView):
 	template_name = 'about.html'
 
@@ -68,3 +72,43 @@ class DraftListView(LoginRequiredMixin, ListView):
 		return Post.objects.filter(
 			published_date__isnull=True
 		).order_by('created_date')
+	
+@login_required
+def publish_post(request, post_id):
+	post = get_object_or_404(Post, id=post_id)
+	post.publish()
+	return redirect('blog:post_detail', post_id=post_id)
+
+##############################################
+# COMMENT VIEWS
+##############################################
+
+@login_required
+def add_comments_to_post(request, post_id):
+	post = get_object_or_404(Post, id=post_id)
+	if request.method == 'POST':
+		form = CommentForm(request.POST)
+		if form.is_valid():
+			comment = form.save(commit=False)
+			comment.post = post
+			comment.save()
+
+			return redirect('blog:post_detail', post_id=post.id)
+	else:
+		form = CommentForm()
+	return render(request, 'blog/comment_form.html', {
+		'form': form,
+	})
+
+@login_required
+def approve_comment(request, comment_id):
+	comment = get_object_or_404(Comment, id=comment_id)
+	comment.approve()
+	return redirect('blog:post_detail', post_id=comment.post.id)
+
+@login_required
+def remove_comment(request, comment_id):
+	comment = get_object_or_404(Comment, id=comment_id)
+	post_id = comment.post.id
+	comment.delete()
+	return redirect('blog:post_detail', post_id=post_id)

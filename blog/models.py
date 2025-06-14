@@ -17,8 +17,8 @@ class Post(models.Model):
 		self.published_date = timezone.now()
 		self.save()
 	
-	def approve_comments(self):
-		return self.comments.filter(approved_comments=True)
+	def approved_comments(self):
+		return self.comments.filter(approved=True)
 	
 	def get_absolute_url(self):
 		return reverse('post_detail', kwargs={'pk': self.pk})
