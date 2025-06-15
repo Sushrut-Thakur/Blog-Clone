@@ -2,7 +2,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse_lazy
+from django.contrib import messages
+from django.urls import reverse, reverse_lazy
+from django.http import HttpResponseForbidden
 from django.views.generic import (
 	TemplateView,
 	ListView,
@@ -14,6 +16,7 @@ from django.views.generic import (
 
 from blog.models import Post, Comment
 from blog.forms import PostForm, CommentForm
+from blog.mixins import GetPostByIdMixin
 
 ##############################################
 # POST VIEWS
@@ -24,7 +27,7 @@ class AboutView(TemplateView):
 
 class PostListView(ListView):
 	model = Post
-	template_name = 'post_list.html'
+	template_name = 'index.html'
 	context_object_name = 'posts'
 
 	def get_queryset(self):
@@ -32,62 +35,66 @@ class PostListView(ListView):
 			published_date__lte=timezone.now()
 		).order_by('-published_date')
 
-class PostDetailView(DetailView):
+class PostDetailView(GetPostByIdMixin, DetailView):
 	model = Post
 	template_name = 'post_detail.html'
 	context_object_name = 'post'
 
-	def get_object(self, queryset=None):
-		post_id = self.kwargs.get('post_id')
-		return get_object_or_404(Post, pk=post_id)
-
 
 class CreatePostView(LoginRequiredMixin, CreateView):
-	login_url = '/login/'
 	template_name = 'post_form.html'
-	redirect_field_name = 'blog/post_detail.html'
 	form_class = PostForm
 	model = Post
 
 	def form_valid(self, form):
 		form.instance.author = self.request.user
 		return super().form_valid(form)
+	
+	def get_success_url(self):
+		return reverse('blog:post_detail', kwargs={'post_id': self.object.id})
 
-class UpdatePostView(LoginRequiredMixin, UpdateView):
-	login_url = '/login/'
-	redirect_field_name = 'blog/post_detail.html'
+class UpdatePostView(LoginRequiredMixin, GetPostByIdMixin, UpdateView):
 	form_class = PostForm
 	model = Post
 
-	def get_object(self, queryset=None):
-		post_id = self.kwargs.get('post_id')
-		return get_object_or_404(Post, pk=post_id)
+	def dispatch(self, request, *args, **kwargs):
+		obj = self.get_object()
+		if self.request.user != obj.author and not self.request.user.is_superuser:
+			messages.error(request, "You're not allowed to edit this post.")
+			return redirect('blog:post_detail', post_id=obj.id)
+		return super().dispatch(request, *args, **kwargs)
+
+	def get_success_url(self):
+		return reverse('blog:post_detail', kwargs={'post_id': self.object.id})
 	
-class DeletePostView(LoginRequiredMixin, DeleteView):
+class DeletePostView(LoginRequiredMixin, GetPostByIdMixin, DeleteView):
 	model = Post
 	template_name = 'post_delete.html'
-	success_url = reverse_lazy('blog:posts_list')
+	success_url = reverse_lazy('blog:list_posts')
 
-	def get_object(self, queryset=None):
-		post_id = self.kwargs.get('post_id')
-		return get_object_or_404(Post, pk=post_id)
+	def dispatch(self, request, *args, **kwargs):
+		obj = self.get_object()
+		if self.request.user != obj.author and not self.request.user.is_superuser:
+			messages.error(request, "You're not allowed to delete this post.")
+			return redirect('blog:post_detail', post_id=obj.id)
+		return super().dispatch(request, *args, **kwargs)
 
 class DraftListView(LoginRequiredMixin, ListView):
-	login_url = '/login/'
-	redirect_field_name = 'blog/post_list.html'
 	model = Post
 	context_object_name = 'draft_posts'
 	template_name = 'blog/post_draft_list.html'
 
 	def get_queryset(self):
 		return Post.objects.filter(
-			published_date__isnull=True
+			published_date__isnull=True,
+			author=self.request.user
 		).order_by('created_date')
 	
 @login_required
 def publish_post(request, post_id):
 	post = get_object_or_404(Post, id=post_id)
 	post.publish()
+	messages.success(request, "Post published successfully.")
 	return redirect('blog:post_detail', post_id=post_id)
 
 ##############################################
@@ -102,6 +109,7 @@ def add_comments_to_post(request, post_id):
 		if form.is_valid():
 			comment = form.save(commit=False)
 			comment.post = post
+			comment.author = request.user
 			comment.save()
 
 			return redirect('blog:post_detail', post_id=post.id)
@@ -114,12 +122,20 @@ def add_comments_to_post(request, post_id):
 @login_required
 def approve_comment(request, comment_id):
 	comment = get_object_or_404(Comment, id=comment_id)
+	if request.user != comment.post.author and not request.user.is_superuser:
+		messages.error(request, "You don’t have permission to approve this comment.")
+		return redirect('blog:post_detail', post_id=comment.post.id)
 	comment.approve()
+	messages.success(request, "Comment approved successfully.")
 	return redirect('blog:post_detail', post_id=comment.post.id)
 
 @login_required
 def remove_comment(request, comment_id):
 	comment = get_object_or_404(Comment, id=comment_id)
+	if request.user != comment.author and request.user != comment.post.author and not request.user.is_superuser:
+		messages.error(request, "You don’t have permission to remove this comment.")
+		return redirect('blog:post_detail', post_id=comment.post.id)	
 	post_id = comment.post.id
 	comment.delete()
+	messages.success(request, "Comment deleted successfully.")
 	return redirect('blog:post_detail', post_id=post_id)

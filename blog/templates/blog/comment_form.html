@@ -6,16 +6,9 @@
 
 {% block content %}
 	<div class="container mt-5">
+		<h2 class="mb-4">Add a Comment</h2>
 		<form method="POST">
 			{% csrf_token %}
-
-			<div class="mb-3">
-				{{ form.author.label_tag }}
-				{{ form.author }}
-				{% if form.author.errors %}
-					<div class="text-danger">{{ form.author.errors }}</div>
-				{% endif %}
-			</div>
 
 			<div class="mb-3">
 				{{ form.text.label_tag }}
@@ -28,5 +21,8 @@
 			<button type="submit" class="btn btn-primary">Post</button>
 		</form>
 	</div>
-	<script>var editor = new MediumEditor('.editable');</script>
+
+	<script>
+		var editor = new MediumEditor('.editable');
+	</script>
 {% endblock %}

@@ -5,26 +5,33 @@ from blog.models import Post, Comment
 class PostForm(forms.ModelForm):
 	class Meta:
 		model = Post
-		fields = ('author', 'title', 'text')
+		fields = ('title', 'text')
+		labels = {
+			'title': 'Blog Title',
+			'text': 'Your Content',
+		}
+		help_texts = {
+			'title': 'Use a catchy headline',
+		}
 
 		widgets = {
 			'title': forms.TextInput(attrs={
-				'class': 'textinputclass'
+				'class': 'form-control',
+				'placeholder': 'Title of your post',
 			}),
 			'text': forms.Textarea(attrs={
-				'class': 'editable medium-editor-textarea postcontent'
+				'class': 'editable medium-editor-textarea form-control',
+				'rows': 10,
+				'placeholder': 'Share your thoughts with the world...',
 			})
 		}
 
 class CommentForm(forms.ModelForm):
 	class Meta:
 		model = Comment
-		fields = ('author', 'text')
+		fields = ('text')
 
 		widgets = {
-			'author': forms.TextInput(attrs={
-				'class': 'textinputclass'
-			}),
 			'text': forms.Textarea(attrs={
 				'class': 'editable medium-editor-textarea'
 			})

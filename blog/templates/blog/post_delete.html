@@ -6,7 +6,7 @@
 
 {% block content %}
 	<div class="container mt-5">
-		<div class="card shadow-sm border-danger">
+		<div class="card shadow-sm border border-2 border-danger">
 			<div class="card-body">
 				<h2 class="card-title text-danger text-center mb-4">Confirm Deletion</h2>
 				
@@ -15,10 +15,12 @@
 					<strong class="text-dark">{{ object.title }}</strong>?
 				</p>
 
-				<form method="POST" class="text-center mt-4">
+				<form method="POST" class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-2 mt-4">
 					{% csrf_token %}
-					<a href="{{ object.get_absolute_url }}" class="btn btn-secondary me-2">Cancel</a>
-					<input type="submit" class="btn btn-danger" value="Yes, Delete it">
+					<a href="{{ object.get_absolute_url }}" class="btn btn-secondary me-md-2" role="button">Cancel</a>
+					<button type="submit" class="btn btn-danger" aria-label="Confirm delete post">
+						Yes, Delete Post
+					</button>
 				</form>
 			</div>
 		</div>

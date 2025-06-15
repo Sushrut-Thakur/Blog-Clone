@@ -1,47 +1,62 @@
 {% extends 'blog/base.html' %}
 
 {% block title %}
-	New Post
+	{% if form.instance.pk %}
+		Edit Post
+	{% else %}
+		New Post
+	{% endif %}
 {% endblock %}
 
 {% block content %}
-	<div class="container mt-5">
-		<h2>
-			{% if form.instance.pk %}
-				Edit Post
-			{% else %}
-				New Post
+	<h2 class="mb-4 text-center">
+		{% if form.instance.pk %}
+			Edit Post
+		{% else %}
+			New Post
+		{% endif %}
+	</h2>
+
+	<form method="POST">
+		{% csrf_token %}
+
+		<div class="mb-3">
+			<label for="{{ form.title.id_for_label }}" class="form-label">
+				{{ form.title.label }}:
+			</label>
+			{{ form.title }}
+			<small class="form-text text-muted">
+				{{ form.title.help_text }}
+			</small>
+			{% if form.title.errors %}
+				<div class="text-danger">{{ form.title.errors }}</div>
 			{% endif %}
-		</h2>
-		<form method="POST">
-			{% csrf_token %}
+		</div>
 
-			<div class="mb-3">
-				{{ form.author.label_tag }}
-				{{ form.author }}
-				{% if form.author.errors %}
-					<div class="text-danger">{{ form.author.errors }}</div>
-				{% endif %}
-			</div>
+		<div class="mb-3">
+			<label for="{{ form.text.id_for_label }}" class="form-label">
+				{{ form.text.label }}:
+			</label>
+			{{ form.text }}
+			<small class="form-text text-muted">
+				{{ form.text.help_text }}
+			</small>
+			{% if form.text.errors %}
+				<div class="text-danger">{{ form.text.errors }}</div>
+			{% endif %}
+		</div>
 
-			<div class="mb-3">
-				{{ form.title.label_tag }}
-				{{ form.title }}
-				{% if form.title.errors %}
-					<div class="text-danger">{{ form.title.errors }}</div>
-				{% endif %}
-			</div>
+		<button type="submit" class="btn btn-primary w-100">Save</button>
+	</form>
 
-			<div class="mb-3">
-				{{ form.text.label_tag }}
-				{{ form.text }}
-				{% if form.text.errors %}
-					<div class="text-danger">{{ form.text.errors }}</div>
-				{% endif %}
-			</div>
-
-			<button type="submit" class="btn btn-primary">Save</button>
-		</form>
-	</div>
-	<script>var editor = new MediumEditor('.editable');</script>
+	<script>
+		var editor = new MediumEditor('.editable', {
+			toolbar: {
+				buttons: ['bold', 'italic', 'underline', 'anchor', 'h2', 'h3', 'quote']
+			},
+			placeholder: {
+				text: 'Write your awesome blog post here...'
+			}
+		});
+	</script>
 {% endblock %}
