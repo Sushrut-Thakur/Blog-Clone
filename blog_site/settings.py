@@ -4,6 +4,7 @@ from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = Path.joinpath(BASE_DIR, 'blog', 'templates', 'blog')
+ADMIN_TEMPLATES_DIR = Path.joinpath(BASE_DIR, 'templates')
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -45,7 +46,7 @@ ROOT_URLCONF = 'blog_site.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATES_DIR,],
+        'DIRS': [TEMPLATES_DIR,ADMIN_TEMPLATES_DIR,],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
