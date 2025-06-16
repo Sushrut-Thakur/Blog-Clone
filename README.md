@@ -2,7 +2,6 @@
 Features to add
 - Proper Readme
 - Add tests
-- Debug toolbar
 - User signup / Password reset
 - Custom 404/500
 - Blog categories (tags)
