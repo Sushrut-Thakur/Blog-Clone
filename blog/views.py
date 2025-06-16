@@ -40,6 +40,22 @@ class PostDetailView(GetPostByIdMixin, DetailView):
 	template_name = 'post_detail.html'
 	context_object_name = 'post'
 
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		post = context['post']
+		user = self.request.user
+
+		visible_comments = []
+		for comment in post.comments.all():
+			if comment.approved:
+				visible_comments.append(comment)
+			elif user.is_authenticated:
+				if user == post.author or user == comment.author or user.is_superuser:
+					visible_comments.append(comment)
+
+		context['visible_comments'] = visible_comments
+		return context
+
 
 class CreatePostView(LoginRequiredMixin, CreateView):
 	template_name = 'post_form.html'
