@@ -58,6 +58,9 @@
 						{% if user == post.author or user.is_superuser %}
 							<a href="{% url 'blog:approve_comment' comment_id=comment.id %}" class="btn btn-sm btn-success me-2">Approve</a>
 						{% endif %}
+						{% if user == comment.author %}
+							<a href="{% url 'blog:edit_comment' comment_id=comment.id %}" class="btn btn-sm btn-primary me-2">Edit</a>
+						{% endif %}
 						{% if user == comment.author or user == post.author or user.is_superuser %}
 							<a href="{% url 'blog:remove_comment' comment_id=comment.id %}" class="btn btn-sm btn-danger">Delete</a>
 						{% endif %}

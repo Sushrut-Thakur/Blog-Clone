@@ -136,6 +136,28 @@ def add_comments_to_post(request, post_id):
 	})
 
 @login_required
+def edit_comment(request, comment_id):
+	comment = get_object_or_404(Comment, id=comment_id)
+
+	if request.user == comment.author:
+		if request.method == "POST":
+			form = CommentForm(request.POST, instance=comment)
+			if form.is_valid():
+				form.save()
+				messages.success(request, "Comment updated successfully.")
+				return redirect('blog:post_detail', post_id=comment.post.id)
+		else:
+			form = CommentForm(instance=comment)
+	else:
+		messages.error(request, "You're not allowed to edit this comment.")
+		return redirect('blog:post_detail', post_id=comment.post.id)
+
+	return render(request, 'blog/comment_form.html', {
+		'form': form,
+		'edit_mode': True,
+	})
+
+@login_required
 def approve_comment(request, comment_id):
 	comment = get_object_or_404(Comment, id=comment_id)
 	if request.user != comment.post.author and not request.user.is_superuser:

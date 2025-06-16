@@ -1,12 +1,14 @@
 {% extends 'blog/base.html' %}
 
 {% block title %}
-	New Comment
+	{% if edit_mode %}Edit Comment{% else %}Add Comment{% endif %}
 {% endblock %}
 
 {% block content %}
 	<div class="container mt-5">
-		<h2 class="mb-4">Add a Comment</h2>
+		<h2 class="mb-4">
+			{% if edit_mode %}Edit your Comment{% else %}Add a Comment{% endif %}
+		</h2>
 		<form method="POST">
 			{% csrf_token %}
 
@@ -18,7 +20,9 @@
 				{% endif %}
 			</div>
 
-			<button type="submit" class="btn btn-primary">Post</button>
+			<button type="submit" class="btn btn-primary">
+				{% if edit_mode %}Update{% else %}Post{% endif %}
+			</button>
 		</form>
 	</div>
 

@@ -15,6 +15,7 @@ urlpatterns = [
 	path('drafts/', views.DraftListView.as_view(), name='drafts_list'),
 	# Comment urls
 	path('post/<int:post_id>/comment/', views.add_comments_to_post, name='add_comment'),
+	path('comment/<int:comment_id>/edit/', views.edit_comment, name='edit_comment'),
 	path('comment/<int:comment_id>/approve/', views.approve_comment, name='approve_comment'),
 	path('comment/<int:comment_id>/delete/', views.remove_comment, name='remove_comment'),
 	# Other
