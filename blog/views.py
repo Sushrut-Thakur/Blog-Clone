@@ -40,6 +40,22 @@ class PostDetailView(GetPostByIdMixin, DetailView):
 	template_name = 'post_detail.html'
 	context_object_name = 'post'
 
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		post = context['post']
+		user = self.request.user
+
+		visible_comments = []
+		for comment in post.comments.all():
+			if comment.approved:
+				visible_comments.append(comment)
+			elif user.is_authenticated:
+				if user == post.author or user == comment.author or user.is_superuser:
+					visible_comments.append(comment)
+
+		context['visible_comments'] = visible_comments
+		return context
+
 
 class CreatePostView(LoginRequiredMixin, CreateView):
 	template_name = 'post_form.html'
@@ -117,6 +133,28 @@ def add_comments_to_post(request, post_id):
 		form = CommentForm()
 	return render(request, 'blog/comment_form.html', {
 		'form': form,
+	})
+
+@login_required
+def edit_comment(request, comment_id):
+	comment = get_object_or_404(Comment, id=comment_id)
+
+	if request.user == comment.author:
+		if request.method == "POST":
+			form = CommentForm(request.POST, instance=comment)
+			if form.is_valid():
+				form.save()
+				messages.success(request, "Comment updated successfully.")
+				return redirect('blog:post_detail', post_id=comment.post.id)
+		else:
+			form = CommentForm(instance=comment)
+	else:
+		messages.error(request, "You're not allowed to edit this comment.")
+		return redirect('blog:post_detail', post_id=comment.post.id)
+
+	return render(request, 'blog/comment_form.html', {
+		'form': form,
+		'edit_mode': True,
 	})
 
 @login_required

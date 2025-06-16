@@ -1,7 +1,7 @@
 # Blog website clone
 Features to add
 - Proper Readme
-- About page
+- Add tests
 - User signup / Password reset
 - Custom 404/500
 - Custom admin

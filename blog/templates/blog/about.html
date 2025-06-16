@@ -5,5 +5,33 @@
 {% endblock %}
 
 {% block content %}
-	<h1>About</h1>
+	<div class="max-w-3xl mx-auto px-4 py-8">
+		<h1 class="text-3xl font-bold mb-4">About Us</h1>
+		<p class="text-lg mb-6">
+			Welcome to <strong>Blog</strong> — a clone project built to learn the basics of Django
+		</p>
+
+		<p class="mb-4">
+			Here, you can:<br>
+			✍️ <strong>Write your own blogs</strong><br>
+			🧠 <strong>Read what others have shared</strong><br>
+			💬 <strong>Share your thoughts through comments</strong>.
+		</p>
+
+		<p class="mb-6">
+			This is just the beginning. I'm working on more features — including messaging the admins directly from this
+			page!
+		</p>
+
+		<h2 class="text-2xl font-semibold mt-8 mb-4">Contact Us</h2>
+		<ul class="list-disc list-inside text-lg">
+			<li>Email: <a href="mailto:admin@blog.com" class="text-blue-600 hover:underline">admin@blog.com</a>
+			</li>
+			<li>Phone: <a href="tel:+919876543210" class="text-blue-600 hover:underline">+91 9876 543 210</a></li>
+			<li>Instagram: <a href="https://instagram.com/blogverse" target="_blank"
+					class="text-blue-600 hover:underline">@blog_creator</a></li>
+			<li>Twitter/X: <a href="https://twitter.com/blogverse" target="_blank"
+					class="text-blue-600 hover:underline">@blog_creator</a></li>
+		</ul>
+	</div>
 {% endblock %}
