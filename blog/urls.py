@@ -20,4 +20,5 @@ urlpatterns = [
 	path('comment/<int:comment_id>/delete/', views.remove_comment, name='remove_comment'),
 	# Other
 	path('about/', views.AboutView.as_view(), name='about'),
+	path('accounts/signup/', views.SignUpView.as_view(), name='signup'),
 ]

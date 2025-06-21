@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse, reverse_lazy
 from django.http import HttpResponseForbidden
+from django.contrib.auth import login
 from django.views.generic import (
 	TemplateView,
 	ListView,
@@ -12,10 +13,11 @@ from django.views.generic import (
 	CreateView,
 	UpdateView,
 	DeleteView,
+	FormView,
 )
 
 from blog.models import Post, Comment
-from blog.forms import PostForm, CommentForm
+from blog.forms import PostForm, CommentForm, UserSignUpForm
 from blog.mixins import GetPostByIdMixin
 
 ##############################################
@@ -177,3 +179,17 @@ def remove_comment(request, comment_id):
 	comment.delete()
 	messages.success(request, "Comment deleted successfully.")
 	return redirect('blog:post_detail', post_id=post_id)
+
+##############################################
+# DEFAULT VIEWS
+##############################################
+
+class SignUpView(FormView):
+	template_name = 'registration/signup.html'
+	form_class = UserSignUpForm
+	success_url = reverse_lazy('blog:list_posts')
+
+	def form_valid(self, form):
+		user = form.save()
+		login(self.request, user)
+		return super().form_valid(form)

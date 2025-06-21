@@ -9,7 +9,6 @@ ADMIN_TEMPLATES_DIR = Path.joinpath(BASE_DIR, 'templates')
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
-# 'django-insecure-*)7n2z&plsg)!m=7unj!f-q5^pl4wx-7o@!%s6imbc=#%e%z!('
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', cast=bool)
@@ -17,6 +16,7 @@ ALLOWED_HOSTS = []
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 # Application definition
 
