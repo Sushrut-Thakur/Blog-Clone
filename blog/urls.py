@@ -21,4 +21,6 @@ urlpatterns = [
 	# Other
 	path('about/', views.AboutView.as_view(), name='about'),
 	path('accounts/signup/', views.SignUpView.as_view(), name='signup'),
+	# Password reset
+	path('password_reset/', views.ResetPasswordView.as_view(), name='password_reset'),
 ]

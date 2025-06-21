@@ -3,7 +3,7 @@ from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-TEMPLATES_DIR = Path.joinpath(BASE_DIR, 'blog', 'templates', 'blog')
+APP_TEMPLATES_DIR = Path.joinpath(BASE_DIR, 'blog', 'templates')
 ADMIN_TEMPLATES_DIR = Path.joinpath(BASE_DIR, 'templates')
 
 
@@ -14,9 +14,13 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', cast=bool)
 ALLOWED_HOSTS = []
 
-LOGIN_URL = '/login/'
+LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+# Email config for local testing
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'blog_admin@localhost'
 
 # Application definition
 
@@ -52,7 +56,7 @@ ROOT_URLCONF = 'blog_site.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATES_DIR,ADMIN_TEMPLATES_DIR,],
+        'DIRS': [APP_TEMPLATES_DIR, ADMIN_TEMPLATES_DIR,],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
