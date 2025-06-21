@@ -4,8 +4,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse, reverse_lazy
-from django.http import HttpResponseForbidden
 from django.contrib.auth import login
+from django.contrib.auth.views import PasswordResetView
 from django.views.generic import (
 	TemplateView,
 	ListView,
@@ -17,7 +17,7 @@ from django.views.generic import (
 )
 
 from blog.models import Post, Comment
-from blog.forms import PostForm, CommentForm, UserSignUpForm
+from blog.forms import PostForm, CommentForm, UserSignUpForm, UserPasswordResetForm
 from blog.mixins import GetPostByIdMixin
 
 ##############################################
@@ -29,7 +29,7 @@ class AboutView(TemplateView):
 
 class PostListView(ListView):
 	model = Post
-	template_name = 'index.html'
+	template_name = 'blog/index.html'
 	context_object_name = 'posts'
 
 	def get_queryset(self):
@@ -39,7 +39,7 @@ class PostListView(ListView):
 
 class PostDetailView(GetPostByIdMixin, DetailView):
 	model = Post
-	template_name = 'post_detail.html'
+	template_name = 'blog/post_detail.html'
 	context_object_name = 'post'
 
 	def get_context_data(self, **kwargs):
@@ -60,7 +60,7 @@ class PostDetailView(GetPostByIdMixin, DetailView):
 
 
 class CreatePostView(LoginRequiredMixin, CreateView):
-	template_name = 'post_form.html'
+	template_name = 'blog/post_form.html'
 	form_class = PostForm
 	model = Post
 
@@ -87,7 +87,7 @@ class UpdatePostView(LoginRequiredMixin, GetPostByIdMixin, UpdateView):
 	
 class DeletePostView(LoginRequiredMixin, GetPostByIdMixin, DeleteView):
 	model = Post
-	template_name = 'post_delete.html'
+	template_name = 'blog/post_delete.html'
 	success_url = reverse_lazy('blog:list_posts')
 
 	def dispatch(self, request, *args, **kwargs):
@@ -193,3 +193,8 @@ class SignUpView(FormView):
 		user = form.save()
 		login(self.request, user)
 		return super().form_valid(form)
+
+class ResetPasswordView(PasswordResetView):
+	form_class = UserPasswordResetForm
+	template_name = 'registration/reset_password.html'
+	success_url = reverse_lazy('password_reset_done')

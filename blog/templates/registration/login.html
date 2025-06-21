@@ -53,5 +53,10 @@
         {% endif %}
 
         <button type="submit" class="btn btn-success w-100">Login</button>
+
+        <p class="text-center mt-3">
+            Forgot your password?
+            <a href="{% url 'blog:password_reset' %}">Reset</a>
+        </p>
     </form>
 {% endblock %}
