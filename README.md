@@ -1,7 +1,6 @@
 # Blog website clone
 Features to add
 - Proper Readme
-- Password reset
 - Custom 404/500
 - Blog categories (tags)
 - Comment replies (self referencing)
