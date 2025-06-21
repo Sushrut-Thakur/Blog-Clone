@@ -1,7 +1,6 @@
 # Blog website clone
 Features to add
 - Proper Readme
-- Custom 404/500
 - Blog categories (tags)
 - Comment replies (self referencing)
 - Slug field for urls (/post/django-is-awesome instead of /post/42)
