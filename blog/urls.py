@@ -14,10 +14,10 @@ urlpatterns = [
 	path('post/<slug:slug>/delete/', views.DeletePostView.as_view(), name='delete_post'),
 	path('drafts/', views.DraftListView.as_view(), name='drafts_list'),
 	# Comment urls
-	path('post/<slug:slug>/comment/', views.add_comments_to_post, name='add_comment'),
-	path('comment/<int:comment_id>/edit/', views.edit_comment, name='edit_comment'),
-	path('comment/<int:comment_id>/approve/', views.approve_comment, name='approve_comment'),
-	path('comment/<int:comment_id>/delete/', views.remove_comment, name='remove_comment'),
+	path('post/<slug:slug>/comment/', views.AddCommentView.as_view(), name='add_comment'),
+	path('comment/<int:comment_id>/edit/', views.EditCommentView.as_view(), name='edit_comment'),
+	path('comment/<int:comment_id>/approve/', views.ApproveCommentView.as_view(), name='approve_comment'),
+	path('comment/<int:comment_id>/delete/', views.RemoveCommentView.as_view(), name='remove_comment'),
 	# Other
 	path('about/', views.AboutView.as_view(), name='about'),
 	path('accounts/signup/', views.SignUpView.as_view(), name='signup'),
