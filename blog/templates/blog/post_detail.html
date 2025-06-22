@@ -62,7 +62,10 @@
 							<a href="{% url 'blog:edit_comment' comment_id=comment.id %}" class="btn btn-sm btn-primary me-2">Edit</a>
 						{% endif %}
 						{% if user == comment.author or user == post.author or user.is_superuser %}
-							<a href="{% url 'blog:remove_comment' comment_id=comment.id %}" class="btn btn-sm btn-danger">Delete</a>
+							<form action="{% url 'blog:remove_comment' comment_id=comment.id %}" method="post" style="display:inline;">
+    							{% csrf_token %}
+    							<button type="submit" class="btn btn-sm btn-danger" style="padding: 0.25rem 0.5rem;">Delete</button>
+							</form>
 						{% endif %}
 					{% endif %}
 				</div>
