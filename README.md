@@ -11,7 +11,7 @@ Basic blog functionality (posts, login/signup, error pages, etc.) is implemented
 - [ ] Write a proper README 📖
 - [ ] Blog categories/tags
 - [ ] Nested comment replies (self-referencing)
-- [ ] SEO-friendly slugs (e.g., `/post/django-is-awesome` instead of `/post/42`)
+- [x] SEO-friendly slugs (e.g., `/post/django-is-awesome` instead of `/post/42`)
 - [ ] Pagination for post lists
 - [ ] Post likes (❤️)
 - [ ] Search functionality 🔍
