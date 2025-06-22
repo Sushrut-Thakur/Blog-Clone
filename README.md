@@ -16,7 +16,7 @@ Basic blog functionality (posts, login/signup, error pages, etc.) is implemented
 - [ ] Post likes (❤️)
 - [ ] Search functionality 🔍
 - [ ] Contact form on the About page
-- [ ] Convert comment views to class-based views (CBVs)
+- [x] Convert comment views to class-based views (CBVs)
 
 ## 📦 Tech Stack
 
