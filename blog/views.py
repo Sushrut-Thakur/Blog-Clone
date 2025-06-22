@@ -69,7 +69,7 @@ class CreatePostView(LoginRequiredMixin, CreateView):
 		return super().form_valid(form)
 	
 	def get_success_url(self):
-		return reverse('blog:post_detail', kwargs={'post_id': self.object.id})
+		return reverse('blog:post_detail', kwargs={'slug': self.object.slug})
 
 class UpdatePostView(LoginRequiredMixin, GetPostByIdMixin, UpdateView):
 	form_class = PostForm
@@ -79,11 +79,11 @@ class UpdatePostView(LoginRequiredMixin, GetPostByIdMixin, UpdateView):
 		obj = self.get_object()
 		if self.request.user != obj.author and not self.request.user.is_superuser:
 			messages.error(request, "You're not allowed to edit this post.")
-			return redirect('blog:post_detail', post_id=obj.id)
+			return redirect('blog:post_detail', slug=obj.slug)
 		return super().dispatch(request, *args, **kwargs)
 
 	def get_success_url(self):
-		return reverse('blog:post_detail', kwargs={'post_id': self.object.id})
+		return reverse('blog:post_detail', kwargs={'slug': self.object.slug})
 	
 class DeletePostView(LoginRequiredMixin, GetPostByIdMixin, DeleteView):
 	model = Post
@@ -94,7 +94,7 @@ class DeletePostView(LoginRequiredMixin, GetPostByIdMixin, DeleteView):
 		obj = self.get_object()
 		if self.request.user != obj.author and not self.request.user.is_superuser:
 			messages.error(request, "You're not allowed to delete this post.")
-			return redirect('blog:post_detail', post_id=obj.id)
+			return redirect('blog:post_detail', slug=obj.slug)
 		return super().dispatch(request, *args, **kwargs)
 
 class DraftListView(LoginRequiredMixin, ListView):
@@ -109,19 +109,19 @@ class DraftListView(LoginRequiredMixin, ListView):
 		).order_by('created_date')
 	
 @login_required
-def publish_post(request, post_id):
-	post = get_object_or_404(Post, id=post_id)
+def publish_post(request, slug):
+	post = get_object_or_404(Post, slug=slug)
 	post.publish()
 	messages.success(request, "Post published successfully.")
-	return redirect('blog:post_detail', post_id=post_id)
+	return redirect('blog:post_detail', slug=slug)
 
 ##############################################
 # COMMENT VIEWS
 ##############################################
 
 @login_required
-def add_comments_to_post(request, post_id):
-	post = get_object_or_404(Post, id=post_id)
+def add_comments_to_post(request, slug):
+	post = get_object_or_404(Post, slug=slug)
 	if request.method == 'POST':
 		form = CommentForm(request.POST)
 		if form.is_valid():
@@ -130,7 +130,7 @@ def add_comments_to_post(request, post_id):
 			comment.author = request.user
 			comment.save()
 
-			return redirect('blog:post_detail', post_id=post.id)
+			return redirect('blog:post_detail', slug=slug)
 	else:
 		form = CommentForm()
 	return render(request, 'blog/comment_form.html', {
@@ -147,12 +147,12 @@ def edit_comment(request, comment_id):
 			if form.is_valid():
 				form.save()
 				messages.success(request, "Comment updated successfully.")
-				return redirect('blog:post_detail', post_id=comment.post.id)
+				return redirect('blog:post_detail', slug=comment.post.slug)
 		else:
 			form = CommentForm(instance=comment)
 	else:
 		messages.error(request, "You're not allowed to edit this comment.")
-		return redirect('blog:post_detail', post_id=comment.post.id)
+		return redirect('blog:post_detail', slug=comment.post.slug)
 
 	return render(request, 'blog/comment_form.html', {
 		'form': form,
@@ -164,21 +164,21 @@ def approve_comment(request, comment_id):
 	comment = get_object_or_404(Comment, id=comment_id)
 	if request.user != comment.post.author and not request.user.is_superuser:
 		messages.error(request, "You don’t have permission to approve this comment.")
-		return redirect('blog:post_detail', post_id=comment.post.id)
+		return redirect('blog:post_detail', slug=comment.post.slug)
 	comment.approve()
 	messages.success(request, "Comment approved successfully.")
-	return redirect('blog:post_detail', post_id=comment.post.id)
+	return redirect('blog:post_detail', slug=comment.post.slug)
 
 @login_required
 def remove_comment(request, comment_id):
 	comment = get_object_or_404(Comment, id=comment_id)
 	if request.user != comment.author and request.user != comment.post.author and not request.user.is_superuser:
 		messages.error(request, "You don’t have permission to remove this comment.")
-		return redirect('blog:post_detail', post_id=comment.post.id)	
-	post_id = comment.post.id
+		return redirect('blog:post_detail', slug=comment.post.slug)	
+	slug = comment.post.slug
 	comment.delete()
 	messages.success(request, "Comment deleted successfully.")
-	return redirect('blog:post_detail', post_id=post_id)
+	return redirect('blog:post_detail', slug=slug)
 
 ##############################################
 # DEFAULT VIEWS

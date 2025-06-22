@@ -7,7 +7,7 @@ class PostAdmin(admin.ModelAdmin):
 	fields = ['author', 'title', 'text', 'published_date']
 	search_fields = ['title']
 	list_filter = ['published_date', 'author']
-	list_display = ['title', 'author']
+	list_display = ['title', 'slug', 'author']
 
 class CommentAdmin(admin.ModelAdmin):
 	fields = ['post', 'author', 'text', 'approved']

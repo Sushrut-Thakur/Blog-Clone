@@ -22,7 +22,7 @@
 			<div class="card mb-4 shadow-sm">
 				<div class="card-body">
 					<h4 class="card-title text-center">
-						<a href="{% url 'blog:post_detail' post_id=post.id %}" class="text-decoration-none text-dark">
+						<a href="{% url 'blog:post_detail' slug=post.slug %}" class="text-decoration-none text-dark">
 							{{ post.title }}
 						</a>
 					</h4>
