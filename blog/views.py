@@ -108,13 +108,14 @@ class DraftListView(LoginRequiredMixin, ListView):
 			published_date__isnull=True,
 			author=self.request.user
 		).order_by('created_date')
-	
-@login_required
-def publish_post(request, slug):
-	post = get_object_or_404(Post, slug=slug)
-	post.publish()
-	messages.success(request, "Post published successfully.")
-	return redirect('blog:post_detail', slug=slug)
+
+class PublishPostView(LoginRequiredMixin, View):
+	def get(self, request, slug, *args, **kwargs):
+		post = get_object_or_404(Post, slug=slug)
+		post.publish()
+		messages.success(request, "Post published successfully.")
+		return redirect('blog:post_detail', slug=slug)
+		
 
 ##############################################
 # COMMENT VIEWS
