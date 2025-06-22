@@ -36,7 +36,7 @@ class PostTests(TestCase):
 
 	def test_post_detail_view(self):
 		url = reverse('blog:post_detail', kwargs={
-			'post_id': self.post.id,
+			'slug': self.post.slug,
 		})
 		response = self.client.get(url)
 		self.assertEqual(response.status_code, 200)
@@ -101,7 +101,7 @@ class CommentTests(TestCase):
 		self.assertNotIn(self.comment2, self.post.approved_comments())
 
 	def test_add_comments_require_login(self):
-		url = reverse('blog:add_comment', kwargs={'post_id': self.post.id})
+		url = reverse('blog:add_comment', kwargs={'slug': self.post.slug})
 		response = self.client.post(url, {'text': "Test comment"})
 		self.assertEqual(response.status_code, 302)
 
@@ -111,7 +111,7 @@ class CommentTests(TestCase):
 	
 	def test_add_comment_successful(self):
 		self.client.login(username='user2', password='qwerty456')
-		url = reverse('blog:add_comment', kwargs={'post_id': self.post.id})
+		url = reverse('blog:add_comment', kwargs={'slug': self.post.slug})
 		response = self.client.post(url, {'text': "Test comment"}, follow=True)
 		self.assertEqual(response.status_code, 200)
 		self.assertContains(response, "Test comment")
